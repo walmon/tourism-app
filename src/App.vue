@@ -3,7 +3,7 @@
 <template>
   <header>
     <a href="/">
-      Tourism souvenir app
+      Provenia
     </a>
   </header>
   <div class="container">
@@ -22,9 +22,20 @@ header {
   margin: 0 auto;
   position: sticky;
   top: 0;
-  background-color: white;
   z-index: 1000;
+  background-color: black;
+  text-align: center;
+  a {
+    font-family: "Radley", serif;
+    text-align: center;
+    padding: 1rem;
+    color: white;
+    text-decoration: none;
+    font-size: 1.5rem;
+    display: inline-block;
+  }
 }
+
 .container {
   max-width: 560px;
   margin: 0 auto;

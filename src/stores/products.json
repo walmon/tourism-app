@@ -26,6 +26,7 @@
         "name": "Product 1",
         "description": "Description of product 1",
         "makerId": 1,
+        "image": "https://picsum.photos/300/200",
         "type": "product",
         "location": "Buenos Aires",
         "content": [{

@@ -1,7 +1,6 @@
 <template>
 
   <div class="content-items">
-    this is the reusable component
     <div v-for="(item, index) in content" :key="`artisan-${index}`" class="content-item">
       <div v-if="item.type === 'title'" class="padded-section-item">
         <h1>{{ item.content }}</h1>
@@ -99,6 +98,10 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
   }
+}
+
+.padded-section-item {
+  padding: 0 0.5rem;
 }
 
 </style>

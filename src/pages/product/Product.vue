@@ -10,6 +10,9 @@
             <div class="maker-info">
               <span v-if="maker.profession === PROFESSIONS.ARTISAN">Handcrafted by</span>
               <h2>{{ maker.name }}</h2>
+              <p>
+                {{ maker.location }}
+              </p>
             </div>
 
             <img class="maker-image" :src="maker.image" :alt="maker.name" />
@@ -19,9 +22,6 @@
               <p> {{ product.location }}</p>
             </div>
           </div>
-          <p>
-            {{ maker.location }}
-          </p>
           <div class="section-header">
             <p>
               {{ maker.bio }}
@@ -36,7 +36,11 @@
       <!-- Product Section -->
       <section class="section" data-section="product">
         <div class="section-content">
-          <h2 class="section-title">Product</h2>
+          <div class="product-section-header">
+            <img class="product-image" :src="product.image" :alt="product.name" />
+            <h2 class="product-name">{{ product.name }}</h2>
+            <p> {{ product.location }}</p>
+          </div>
           <ProductContent :content="product.content" />
         </div>
       </section>
@@ -80,7 +84,7 @@ const props = defineProps({
 
 const data = computed(() => getProduct(props.id))
 const sectionsContainer = ref(null)
-const activeTab = ref('artisan')
+const activeTab = ref(localStorage.getItem('activeTab') || 'artisan')
 
 // Touch/swipe handling
 const touchStartX = ref(0)
@@ -96,27 +100,8 @@ const maker = computed(() => {
   return data.value?.maker
 })
 
-// Content for each section
-const artisanContent = computed(() => {
-  if (maker.value?.content) {
-    return maker.value.content
-  }
-  return []
-})
-
 const product = computed(() => {
   return data.value?.product
-})
-
-const productContent = computed(() => {
-  if (product.value?.content) {
-    return product.value.content
-  }
-  return [
-    { type: 'text', content: 'Discover the unique features and qualities of this exceptional product.' },
-    { type: 'image', content: 'https://fastly.picsum.photos/id/744/400/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo' },
-    { type: 'text', content: 'Each piece is carefully crafted to ensure durability, beauty, and functionality.' },
-  ]
 })
 
 // Scroll to specific section
@@ -127,6 +112,7 @@ const scrollToSection = (sectionId) => {
   if (section) {
     section.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
     activeTab.value = sectionId
+    localStorage.setItem('activeTab', sectionId)
   }
 }
 
@@ -141,6 +127,7 @@ const handleScroll = () => {
 
   if (tabs[currentIndex]) {
     activeTab.value = tabs[currentIndex].id
+    localStorage.setItem('activeTab', tabs[currentIndex].id)
   }
 }
 
@@ -203,8 +190,9 @@ const handleTouchEnd = (e) => {
 onMounted(() => {
   nextTick(() => {
     if (sectionsContainer.value) {
-      // Ensure we start at the first section
-      scrollToSection('artisan')
+      // Restore saved tab from localStorage, or default to 'artisan'
+      const savedTab = localStorage.getItem('activeTab') || 'artisan'
+      scrollToSection(savedTab)
     }
   })
 })
@@ -225,17 +213,16 @@ onMounted(() => {
   position: relative;
 
 }
+
 .maker-info {
   position: absolute;
   top: 0;
   left: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,1) 0%,
-    rgba(0,0,0,0.9) 30%,
-    rgba(0,0,0,0.8) 60%,
-    rgba(0,0,0,0) 100%
-  );
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.9) 30%,
+      rgba(0, 0, 0, 0.8) 60%,
+      rgba(0, 0, 0, 0) 100%);
   width: 100%;
   padding: 1rem;
   color: white;
@@ -255,26 +242,35 @@ onMounted(() => {
   left: 0;
   color: white;
   width: 100%;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,1) 0%,
-    rgba(0,0,0,0.9) 30%,
-    rgba(0,0,0,0.8) 60%,
-    rgba(0,0,0,0) 100%
-  );
+  background: linear-gradient(to top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.9) 30%,
+      rgba(0, 0, 0, 0.8) 60%,
+      rgba(0, 0, 0, 0) 100%);
   padding: 1rem;
 
   h1 {
     color: white;
-    font-family: "Radley", serif;
-    font-style: italic;
-    font-size: 2rem;
-    margin-bottom: 10px;
   }
+}
+
+.product-name,
+.maker-product h1 {
+  font-family: "Radley", serif;
+  font-style: italic;
+  font-size: 2rem;
+  margin-bottom: 10px;
 }
 
 .maker-image {
   width: 100%;
+}
+
+.product-image {
+  max-width: 90%;
+  margin: 0 auto;
+  display: block;
+  border-radius: 10px;
 }
 
 .sections-container {
@@ -312,17 +308,21 @@ onMounted(() => {
 }
 
 .section-content {
-  padding: 0rem 0 5rem; // Extra bottom padding for fixed nav
+  padding: 0 0 5rem; // Extra bottom padding for fixed nav
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 
   @media (min-width: 768px) {
     padding: 3rem 2rem 6rem;
   }
 }
+
 
 .section-header {
   padding: 0 0.5rem;
@@ -340,6 +340,7 @@ onMounted(() => {
     margin-bottom: 2.5rem;
   }
 }
+
 .tab-navigation {
   position: fixed;
   bottom: 0;
@@ -444,7 +445,8 @@ onMounted(() => {
   -ms-user-select: text;
 }
 
-.padded-section-item {
-  padding: 0 0.5rem;
+.product-section-header {
+  text-align: center;
+  padding-top: 2rem;
 }
 </style>
