@@ -1,0 +1,46 @@
+[{
+    "maker": {
+        "id": 1,
+        "name": "Maker 1",
+        "profession": "artisan",
+        "content": [{
+            "type": "text",
+            "content": "Maker 1 is a skilled artisan who makes products from local materials."
+        },{
+            "type": "image",
+            "content": "https://fastly.picsum.photos/id/744/200/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo"
+        },{
+            "type": "quote",
+            "content": "I love making products from local materials."
+        },{
+            "type": "text",
+            "content": "Maker 1 is a skilled artisan who makes products from local materials."
+        },{
+            "type": "image",
+            "content": "https://fastly.picsum.photos/id/744/200/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo"
+        }]
+    },
+    "product": {
+        "id": 1,
+        "name": "Product 1",
+        "description": "Description of product 1",
+        "makerId": 1,
+        "type": "product",
+        "content": [{
+            "type": "text",
+            "content": "Maker 1 is a skilled artisan who makes products from local materials."
+        },{
+            "type": "image",
+            "content": "https://fastly.picsum.photos/id/744/200/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo"
+        },{
+            "type": "quote",
+            "content": "I love making products from local materials."
+        },{
+            "type": "text",
+            "content": "Maker 1 is a skilled artisan who makes products from local materials."
+        },{
+            "type": "image",
+            "content": "https://fastly.picsum.photos/id/744/200/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo"
+        }]
+    }
+}]
