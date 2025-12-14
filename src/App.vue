@@ -3,7 +3,7 @@
 <template>
   <header>
     <a href="/">
-      Provenia
+      <img src="/proveniawhite.svg" alt="Provenia" height="40"/>
     </a>
   </header>
   <div class="container">
@@ -28,7 +28,7 @@ header {
   a {
     font-family: "Radley", serif;
     text-align: center;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     color: white;
     text-decoration: none;
     font-size: 1.5rem;
