@@ -1,2 +1,6 @@
 // @use 'animate.css/animate.css' as *;
 @use 'reset.scss';
+
+p, span, div {
+  font-size: 1rem;
+}

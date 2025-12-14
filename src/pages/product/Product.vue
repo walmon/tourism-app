@@ -1,34 +1,35 @@
 <template>
   <div class="product-page">
     <!-- Horizontal scrollable container for sections -->
-    <div
-      ref="sectionsContainer"
-      class="sections-container"
-      @scroll="handleScroll"
-      @touchstart="handleTouchStart"
-      @touchmove="handleTouchMove"
-      @touchend="handleTouchEnd"
-    >
+    <div ref="sectionsContainer" class="sections-container" @scroll="handleScroll" @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove" @touchend="handleTouchEnd">
       <!-- Artisan Section -->
       <section class="section" data-section="artisan">
         <div class="section-content">
-          <h2 class="section-title">Artisan</h2>
-          <div class="content-items">
-            <div v-for="(item, index) in artisanContent" :key="`artisan-${index}`" class="content-item">
-              <div v-if="item.type === 'title'">
-                <h1>{{ item.content }}</h1>
-              </div>
-              <div v-else-if="item.type === 'text'">
-                <p>{{ item.content }}</p>
-              </div>
-              <div v-else-if="item.type === 'quote'">
-                <blockquote>"{{ item.content }}"</blockquote>
-              </div>
-              <div v-else-if="item.type === 'image'">
-                <img :src="item.content" :alt="item.content" />
-              </div>
+          <div class="maker-info-wrapper">
+            <div class="maker-info">
+              <span v-if="maker.profession === PROFESSIONS.ARTISAN">Handcrafted by</span>
+              <h2>{{ maker.name }}</h2>
+            </div>
+
+            <img class="maker-image" :src="maker.image" :alt="maker.name" />
+
+            <div class="maker-product">
+              <h1>{{ product.name }}</h1>
+              <p> {{ product.location }}</p>
             </div>
           </div>
+          <p>
+            {{ maker.location }}
+          </p>
+          <div class="section-header">
+            <p>
+              {{ maker.bio }}
+            </p>
+
+          </div>
+
+          <ProductContent :content="maker.content" />
         </div>
       </section>
 
@@ -36,80 +37,16 @@
       <section class="section" data-section="product">
         <div class="section-content">
           <h2 class="section-title">Product</h2>
-          <div class="content-items">
-            <div v-for="(item, index) in productContent" :key="`product-${index}`" class="content-item">
-              <div v-if="item.type === 'title'">
-                <h1>{{ item.content }}</h1>
-              </div>
-              <div v-else-if="item.type === 'text'">
-                <p>{{ item.content }}</p>
-              </div>
-              <div v-else-if="item.type === 'quote'">
-                <blockquote>"{{ item.content }}"</blockquote>
-              </div>
-              <div v-else-if="item.type === 'image'">
-                <img :src="item.content" :alt="item.content" />
-              </div>
-            </div>
-          </div>
+          <ProductContent :content="product.content" />
         </div>
       </section>
 
-      <!-- How it's made Section -->
-      <section class="section" data-section="how-its-made">
-        <div class="section-content">
-          <h2 class="section-title">How it's made</h2>
-          <div class="content-items">
-            <div v-for="(item, index) in howItsMadeContent" :key="`how-${index}`" class="content-item">
-              <div v-if="item.type === 'title'">
-                <h1>{{ item.content }}</h1>
-              </div>
-              <div v-else-if="item.type === 'text'">
-                <p>{{ item.content }}</p>
-              </div>
-              <div v-else-if="item.type === 'quote'">
-                <blockquote>"{{ item.content }}"</blockquote>
-              </div>
-              <div v-else-if="item.type === 'image'">
-                <img :src="item.content" :alt="item.content" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Traceability Section -->
-      <section class="section" data-section="traceability">
-        <div class="section-content">
-          <h2 class="section-title">Traceability</h2>
-          <div class="content-items">
-            <div v-for="(item, index) in traceabilityContent" :key="`trace-${index}`" class="content-item">
-              <div v-if="item.type === 'title'">
-                <h1>{{ item.content }}</h1>
-              </div>
-              <div v-else-if="item.type === 'text'">
-                <p>{{ item.content }}</p>
-              </div>
-              <div v-else-if="item.type === 'quote'">
-                <blockquote>"{{ item.content }}"</blockquote>
-              </div>
-              <div v-else-if="item.type === 'image'">
-                <img :src="item.content" :alt="item.content" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
 
     <!-- Fixed bottom tab navigation -->
     <nav class="tab-navigation">
-      <button
-        v-for="tab in tabs"
-        :key="tab.id"
-        :class="['tab-button', { active: activeTab === tab.id }]"
-        @click="scrollToSection(tab.id)"
-      >
+      <button v-for="tab in tabs" :key="tab.id" :class="['tab-button', { active: activeTab === tab.id }]"
+        @click="scrollToSection(tab.id)">
         <span class="tab-label">{{ tab.label }}</span>
       </button>
     </nav>
@@ -119,6 +56,14 @@
 <script setup>
 import { computed, ref, onMounted, nextTick } from 'vue'
 import { useProductsStore } from '@/stores/productsStore'
+import ProductContent from './components/ProductContent.vue'
+
+const PROFESSIONS = {
+  ARTISAN: 'artisan',
+  DESIGNER: 'designer',
+  ENGINEER: 'engineer',
+  OTHER: 'other',
+}
 
 // Component name for linting
 defineOptions({
@@ -133,7 +78,7 @@ const props = defineProps({
   },
 })
 
-const product = computed(() => getProduct(props.id))
+const data = computed(() => getProduct(props.id))
 const sectionsContainer = ref(null)
 const activeTab = ref('artisan')
 
@@ -144,60 +89,33 @@ const isScrolling = ref(false)
 
 const tabs = [
   { id: 'artisan', label: 'Artisan' },
-  { id: 'product', label: 'Product' },
-  { id: 'how-its-made', label: "How it's made" },
-  { id: 'traceability', label: 'Traceability' },
+  { id: 'product', label: 'Product' }
 ]
+
+const maker = computed(() => {
+  return data.value?.maker
+})
 
 // Content for each section
 const artisanContent = computed(() => {
-  if (product.value?.maker?.content) {
-    return product.value.maker.content
+  if (maker.value?.content) {
+    return maker.value.content
   }
-  return [
-    { type: 'text', content: 'Meet our skilled artisan who creates beautiful products using traditional techniques and local materials.' },
-    { type: 'image', content: 'https://fastly.picsum.photos/id/744/400/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo' },
-    { type: 'quote', content: 'Craftsmanship is not just about making things, it\'s about preserving traditions and creating something meaningful.' },
-    { type: 'text', content: 'With years of experience and a passion for quality, our artisan ensures every product meets the highest standards.' },
-  ]
+  return []
+})
+
+const product = computed(() => {
+  return data.value?.product
 })
 
 const productContent = computed(() => {
-  if (product.value?.product?.content) {
-    return product.value.product.content
+  if (product.value?.content) {
+    return product.value.content
   }
   return [
     { type: 'text', content: 'Discover the unique features and qualities of this exceptional product.' },
     { type: 'image', content: 'https://fastly.picsum.photos/id/744/400/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo' },
     { type: 'text', content: 'Each piece is carefully crafted to ensure durability, beauty, and functionality.' },
-  ]
-})
-
-const howItsMadeContent = computed(() => {
-  return [
-    { type: 'title', content: 'The Process' },
-    { type: 'text', content: 'Our products are made using time-honored techniques passed down through generations.' },
-    { type: 'image', content: 'https://fastly.picsum.photos/id/744/400/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo' },
-    { type: 'text', content: 'Step 1: Selection of premium materials from local sources.' },
-    { type: 'text', content: 'Step 2: Preparation and treatment of materials using traditional methods.' },
-    { type: 'image', content: 'https://fastly.picsum.photos/id/744/400/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo' },
-    { type: 'text', content: 'Step 3: Handcrafting by skilled artisans with attention to detail.' },
-    { type: 'text', content: 'Step 4: Quality inspection and finishing touches.' },
-    { type: 'quote', content: 'Every step is performed with care and dedication to create something truly special.' },
-  ]
-})
-
-const traceabilityContent = computed(() => {
-  return [
-    { type: 'title', content: 'Full Transparency' },
-    { type: 'text', content: 'We believe in complete transparency about the origin and journey of our products.' },
-    { type: 'image', content: 'https://fastly.picsum.photos/id/744/400/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo' },
-    { type: 'text', content: 'Origin: Sourced from local suppliers committed to sustainable practices.' },
-    { type: 'text', content: 'Production: Handcrafted in our workshop using traditional techniques.' },
-    { type: 'text', content: 'Quality Assurance: Each product undergoes rigorous quality checks.' },
-    { type: 'image', content: 'https://fastly.picsum.photos/id/744/400/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo' },
-    { type: 'text', content: 'Certification: Our products meet international quality and sustainability standards.' },
-    { type: 'quote', content: 'Know exactly where your product comes from and how it was made.' },
   ]
 })
 
@@ -303,6 +221,62 @@ onMounted(() => {
   flex-direction: column;
 }
 
+.maker-info-wrapper {
+  position: relative;
+
+}
+.maker-info {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.9) 30%,
+    rgba(0,0,0,0.8) 60%,
+    rgba(0,0,0,0) 100%
+  );
+  width: 100%;
+  padding: 1rem;
+  color: white;
+
+  h2 {
+    color: white;
+    font-family: "Radley", serif;
+    font-style: italic;
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+}
+
+.maker-product {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: white;
+  width: 100%;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,1) 0%,
+    rgba(0,0,0,0.9) 30%,
+    rgba(0,0,0,0.8) 60%,
+    rgba(0,0,0,0) 100%
+  );
+  padding: 1rem;
+
+  h1 {
+    color: white;
+    font-family: "Radley", serif;
+    font-style: italic;
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+}
+
+.maker-image {
+  width: 100%;
+}
+
 .sections-container {
   flex: 1;
   display: flex;
@@ -338,7 +312,7 @@ onMounted(() => {
 }
 
 .section-content {
-  padding: 2rem 1.5rem 5rem; // Extra bottom padding for fixed nav
+  padding: 0rem 0 5rem; // Extra bottom padding for fixed nav
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
@@ -348,6 +322,11 @@ onMounted(() => {
   @media (min-width: 768px) {
     padding: 3rem 2rem 6rem;
   }
+}
+
+.section-header {
+  padding: 0 0.5rem;
+
 }
 
 .section-title {
@@ -361,86 +340,6 @@ onMounted(() => {
     margin-bottom: 2.5rem;
   }
 }
-
-.content-items {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  margin-bottom: 0;
-
-  @media (min-width: 768px) {
-    gap: 2rem;
-  }
-}
-
-.content-item {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-
-  h1 {
-    font-size: 1.75rem;
-    font-weight: 600;
-    margin: 0 0 1rem;
-    color: #222;
-
-    @media (min-width: 768px) {
-      font-size: 2rem;
-    }
-  }
-
-  p {
-    font-size: 1rem;
-    line-height: 1.6;
-    margin: 0;
-    color: #555;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
-
-    @media (min-width: 768px) {
-      font-size: 1.125rem;
-      line-height: 1.7;
-    }
-  }
-
-  blockquote {
-    font-size: 1.125rem;
-    font-style: italic;
-    margin: 1.5rem 0;
-    padding: 1.5rem;
-    background: #f5f5f5;
-    border-left: 4px solid #333;
-    color: #444;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 100%;
-    box-sizing: border-box;
-
-    @media (min-width: 768px) {
-      font-size: 1.25rem;
-      padding: 2rem;
-      margin: 2rem 0;
-    }
-  }
-
-  img {
-    max-width: 100%;
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    display: block;
-    margin: 1rem 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
-
-    @media (min-width: 768px) {
-      margin: 1.5rem 0;
-      border-radius: 12px;
-    }
-  }
-}
-
 .tab-navigation {
   position: fixed;
   bottom: 0;
@@ -478,7 +377,6 @@ onMounted(() => {
   transition: all 0.3s ease;
   position: relative;
   font-size: 0.875rem;
-  color: #666;
   white-space: nowrap;
   box-sizing: border-box;
   max-width: 100%;
@@ -520,6 +418,7 @@ onMounted(() => {
   from {
     transform: scaleX(0);
   }
+
   to {
     transform: scaleX(1);
   }
@@ -543,5 +442,9 @@ onMounted(() => {
   -webkit-user-select: text;
   -moz-user-select: text;
   -ms-user-select: text;
+}
+
+.padded-section-item {
+  padding: 0 0.5rem;
 }
 </style>

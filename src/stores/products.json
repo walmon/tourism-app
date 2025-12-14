@@ -1,12 +1,13 @@
 [{
     "maker": {
         "id": 1,
-        "name": "Maker 1",
+        "name": "Angie Soto",
         "profession": "artisan",
+        "image": "https://picsum.photos/300/300",
+        "bio": "Maker 1 is a skilled artisan who makes products from local materials.",
+        "location": "Reserva Boruca",
+        "languages": ["Spanish", "English", "Portuguese"],
         "content": [{
-            "type": "text",
-            "content": "Maker 1 is a skilled artisan who makes products from local materials."
-        },{
             "type": "image",
             "content": "https://fastly.picsum.photos/id/744/200/300.jpg?hmac=QB_puLFiEKiOkiVJXMeY6ie3KJ4AgggamJiRa4kobOo"
         },{
@@ -26,6 +27,7 @@
         "description": "Description of product 1",
         "makerId": 1,
         "type": "product",
+        "location": "Buenos Aires",
         "content": [{
             "type": "text",
             "content": "Maker 1 is a skilled artisan who makes products from local materials."
