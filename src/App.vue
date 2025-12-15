@@ -12,8 +12,6 @@
 </template>
 
 <style scoped lang="scss">
-// You can now use Sass/SCSS features here
-// Variables, nesting, mixins, etc.
 
 $primary-color: #42b983;
 

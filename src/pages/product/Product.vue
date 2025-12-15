@@ -2,13 +2,24 @@
   <div class="product-page">
     <!-- Horizontal scrollable container for sections -->
     <div v-if="isLoading" class="loading">
-      <img src="/icon.svg" alt="Provenia" class="animate__animated animate__infinite animate__bounce" width="100" height="100" />
-      <div>
-        Take the story home
-      </div>
+      <img
+        src="/icon.svg"
+        alt="Provenia"
+        class="animate__animated animate__infinite animate__bounce"
+        width="100"
+        height="100"
+      />
+      <div>Take the story home</div>
     </div>
-    <div v-else ref="sectionsContainer" class="sections-container" @scroll="handleScroll" @touchstart="handleTouchStart"
-      @touchmove="handleTouchMove" @touchend="handleTouchEnd">
+    <div
+      v-else
+      ref="sectionsContainer"
+      class="sections-container"
+      @scroll="handleScroll"
+      @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
+    >
       <!-- Artisan Section -->
       <section class="section" data-section="artisan">
         <div class="section-content">
@@ -25,14 +36,13 @@
 
             <div class="maker-product">
               <h1>{{ product.name }}</h1>
-              <p> {{ product.location }}</p>
+              <p>{{ product.location }}</p>
             </div>
           </div>
           <div class="section-header">
             <p>
               {{ maker.bio }}
             </p>
-
           </div>
 
           <ProductContent :content="maker.content" />
@@ -45,18 +55,21 @@
           <div class="product-section-header">
             <img class="product-image" :src="product.image" :alt="product.name" />
             <h2 class="product-name">{{ product.name }}</h2>
-            <p> {{ product.location }}</p>
+            <p>{{ product.location }}</p>
           </div>
           <ProductContent :content="product.content" />
         </div>
       </section>
-
     </div>
 
     <!-- Fixed bottom tab navigation -->
     <nav class="tab-navigation">
-      <button v-for="tab in tabs" :key="tab.id" :class="['tab-button', { active: activeTab === tab.id }]"
-        @click="scrollToSection(tab.id)">
+      <button
+        v-for="tab in tabs"
+        :key="tab.id"
+        :class="['tab-button', { active: activeTab === tab.id }]"
+        @click="scrollToSection(tab.id)"
+      >
         <span class="tab-label">{{ tab.label }}</span>
       </button>
     </nav>
@@ -78,7 +91,7 @@ const PROFESSIONS = {
 
 // Component name for linting
 defineOptions({
-  name: 'ProductPage'
+  name: 'ProductPage',
 })
 
 const { getProduct } = useProductsStore()
@@ -91,19 +104,19 @@ const data = ref(null)
 onMounted(async () => {
   try {
     data.value = await getProduct(id.value)
-  }catch (error) {
-    console.error(error)
-    router.push('/404')
-  } finally {
+    nextTick(() => {
+      if (sectionsContainer.value) {
+        // Restore saved tab from localStorage, or default to 'artisan'
+        const savedTab = localStorage.getItem('activeTab') || 'artisan'
+        scrollToSection(savedTab)
+      }
+    })
     isLoading.value = false
+  } catch (error) {
+    console.error(error)
+    console.log(error.message)
+    router.push('/404')
   }
-  nextTick(() => {
-    if (sectionsContainer.value) {
-      // Restore saved tab from localStorage, or default to 'artisan'
-      const savedTab = localStorage.getItem('activeTab') || 'artisan'
-      scrollToSection(savedTab)
-    }
-  })
 })
 
 const sectionsContainer = ref(null)
@@ -116,7 +129,7 @@ const isScrolling = ref(false)
 
 const tabs = [
   { id: 'artisan', label: 'Artisan' },
-  { id: 'product', label: 'Product' }
+  { id: 'product', label: 'Product' },
 ]
 
 const maker = computed(() => {
@@ -195,7 +208,7 @@ const handleTouchEnd = (e) => {
 
   // Only trigger tab change if horizontal swipe is significant and greater than vertical movement
   if (Math.abs(diffX) > threshold && Math.abs(diffX) > diffY && isScrolling.value) {
-    const currentIndex = tabs.findIndex(tab => tab.id === activeTab.value)
+    const currentIndex = tabs.findIndex((tab) => tab.id === activeTab.value)
     if (diffX > 0 && currentIndex < tabs.length - 1) {
       // Swipe left - next tab
       scrollToSection(tabs[currentIndex + 1].id)
@@ -222,7 +235,7 @@ const handleTouchEnd = (e) => {
   background: #fff;
   color: #000;
   gap: 1rem;
-  font-family: "Radley", serif;
+  font-family: 'Radley', serif;
 }
 
 .product-page {
@@ -244,18 +257,20 @@ const handleTouchEnd = (e) => {
   position: absolute;
   top: 0;
   left: 0;
-  background: linear-gradient(to bottom,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.9) 30%,
-      rgba(0, 0, 0, 0.8) 60%,
-      rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.9) 30%,
+    rgba(0, 0, 0, 0.8) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
   width: 100%;
   padding: 1rem;
   color: white;
 
   h2 {
     color: white;
-    font-family: "Radley", serif;
+    font-family: 'Radley', serif;
     font-style: italic;
     font-size: 2rem;
     margin-bottom: 10px;
@@ -268,11 +283,13 @@ const handleTouchEnd = (e) => {
   left: 0;
   color: white;
   width: 100%;
-  background: linear-gradient(to top,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.9) 30%,
-      rgba(0, 0, 0, 0.8) 60%,
-      rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.9) 30%,
+    rgba(0, 0, 0, 0.8) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
   padding: 1rem;
 
   h1 {
@@ -282,7 +299,7 @@ const handleTouchEnd = (e) => {
 
 .product-name,
 .maker-product h1 {
-  font-family: "Radley", serif;
+  font-family: 'Radley', serif;
   font-style: italic;
   font-size: 2rem;
   margin-bottom: 10px;
@@ -349,10 +366,8 @@ const handleTouchEnd = (e) => {
   }
 }
 
-
 .section-header {
   padding: 0 0.5rem;
-
 }
 
 .section-title {
