@@ -1,11 +1,15 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import productsData from './products.json'
+import { CDN } from '@/vars'
 
 export const useProductsStore = defineStore('products', () => {
-  const products = ref(productsData)
+  return {
+    getProduct,
+  }
 
-  return { getProduct: (id) => products.value.find(product => product.id === id || true),
-    products: computed(() => products.value),
-   }
+  async function getProduct(id) {
+
+    const response = await fetch(`${CDN}${id}.json`)
+    const data = await response.json()
+    return data
+  }
 })

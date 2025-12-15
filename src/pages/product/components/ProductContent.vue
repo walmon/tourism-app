@@ -1,7 +1,12 @@
 <template>
 
   <div class="content-items">
-    <div v-for="(item, index) in content" :key="`artisan-${index}`" class="content-item">
+    <div
+      v-for="(item, index) in content"
+      :key="`artisan-${index}`"
+      :ref="el => setItemRef(el, index)"
+      :class="['content-item', { 'is-visible': visibleItems.has(index) }]"
+    >
       <div v-if="item.type === 'title'" class="padded-section-item">
         <h1>{{ item.content }}</h1>
       </div>
@@ -20,12 +25,57 @@
 </template>
 
 <script setup>
-  const props = defineProps({
-    content: {
-      type: Array,
-      required: true,
-    },
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const props = defineProps({
+  content: {
+    type: Array,
+    required: true,
+  },
+})
+
+const visibleItems = ref(new Set())
+const itemRefs = ref([])
+
+const setItemRef = (el, index) => {
+  if (el) {
+    itemRefs.value[index] = el
+  }
+}
+
+let observers = []
+
+onMounted(() => {
+  // Create Intersection Observer for each item
+  itemRefs.value.forEach((item, index) => {
+    if (!item) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visibleItems.value.add(index)
+            // Unobserve after animation to improve performance
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      {
+        threshold: 0.1, // Trigger when 10% of item is visible
+        rootMargin: '0px 0px -50px 0px', // Start animation slightly before item enters viewport
+      }
+    )
+
+    observer.observe(item)
+    observers.push(observer)
   })
+})
+
+onUnmounted(() => {
+  // Clean up observers
+  observers.forEach((observer) => observer.disconnect())
+  observers = []
+})
 </script>
 
 <style scoped lang="scss">
@@ -45,6 +95,14 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   h1 {
     font-size: 1.75rem;
@@ -97,6 +155,12 @@
     margin: 1rem 0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
   }
 }
 

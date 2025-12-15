@@ -1,7 +1,13 @@
 <template>
   <div class="product-page">
     <!-- Horizontal scrollable container for sections -->
-    <div ref="sectionsContainer" class="sections-container" @scroll="handleScroll" @touchstart="handleTouchStart"
+    <div v-if="isLoading" class="loading">
+      <img src="/icon.svg" alt="Provenia" class="animate__animated animate__infinite animate__bounce" width="100" height="100" />
+      <div>
+        Take the story home
+      </div>
+    </div>
+    <div v-else ref="sectionsContainer" class="sections-container" @scroll="handleScroll" @touchstart="handleTouchStart"
       @touchmove="handleTouchMove" @touchend="handleTouchEnd">
       <!-- Artisan Section -->
       <section class="section" data-section="artisan">
@@ -15,7 +21,7 @@
               </p>
             </div>
 
-            <img class="maker-image" :src="maker.image" :alt="maker.name" />
+            <img class="maker-image" :src="maker.image" height="300px" :alt="maker.name" />
 
             <div class="maker-product">
               <h1>{{ product.name }}</h1>
@@ -61,6 +67,7 @@
 import { computed, ref, onMounted, nextTick } from 'vue'
 import { useProductsStore } from '@/stores/productsStore'
 import ProductContent from './components/ProductContent.vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const PROFESSIONS = {
   ARTISAN: 'artisan',
@@ -75,14 +82,30 @@ defineOptions({
 })
 
 const { getProduct } = useProductsStore()
-const props = defineProps({
-  id: {
-    type: String,
-    required: true,
-  },
+const route = useRoute()
+const id = computed(() => route.params.id)
+const isLoading = ref(true)
+const router = useRouter()
+const data = ref(null)
+
+onMounted(async () => {
+  try {
+    data.value = await getProduct(id.value)
+  }catch (error) {
+    console.error(error)
+    router.push('/404')
+  } finally {
+    isLoading.value = false
+  }
+  nextTick(() => {
+    if (sectionsContainer.value) {
+      // Restore saved tab from localStorage, or default to 'artisan'
+      const savedTab = localStorage.getItem('activeTab') || 'artisan'
+      scrollToSection(savedTab)
+    }
+  })
 })
 
-const data = computed(() => getProduct(props.id))
 const sectionsContainer = ref(null)
 const activeTab = ref(localStorage.getItem('activeTab') || 'artisan')
 
@@ -186,19 +209,22 @@ const handleTouchEnd = (e) => {
   touchStartY.value = 0
   isScrolling.value = false
 }
-
-onMounted(() => {
-  nextTick(() => {
-    if (sectionsContainer.value) {
-      // Restore saved tab from localStorage, or default to 'artisan'
-      const savedTab = localStorage.getItem('activeTab') || 'artisan'
-      scrollToSection(savedTab)
-    }
-  })
-})
 </script>
 
 <style scoped lang="scss">
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background: #fff;
+  color: #000;
+  gap: 1rem;
+  font-family: "Radley", serif;
+}
+
 .product-page {
   position: relative;
   width: 100%;
@@ -211,7 +237,7 @@ onMounted(() => {
 
 .maker-info-wrapper {
   position: relative;
-
+  background: black;
 }
 
 .maker-info {
