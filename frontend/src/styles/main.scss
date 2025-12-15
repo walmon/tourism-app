@@ -1,7 +1,11 @@
 // @use 'animate.css/animate.css' as *;
 @use 'reset.scss';
 @use 'animate.css/animate.css' as *;
+@use 'variables.scss' as *;
 
+body {
+  background-color: $dark-color;
+}
 p, span, div {
   font-size: 1rem;
 }

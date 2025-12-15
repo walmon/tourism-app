@@ -12,8 +12,7 @@
 </template>
 
 <style scoped lang="scss">
-
-$primary-color: #42b983;
+@use './styles/variables.scss' as *;
 
 header {
   max-width: 560px;
@@ -21,7 +20,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background-color: black;
+  background-color: $dark-color;
   text-align: center;
   a {
     font-family: "Radley", serif;

@@ -27,7 +27,7 @@
             <div class="maker-info">
               <span v-if="maker.profession === PROFESSIONS.ARTISAN">Handcrafted by</span>
               <h2>{{ maker.name }}</h2>
-              <p>
+              <p class="maker-location">
                 {{ maker.location }}
               </p>
             </div>
@@ -225,6 +225,8 @@ const handleTouchEnd = (e) => {
 </script>
 
 <style scoped lang="scss">
+@use '../../styles/variables.scss' as *;
+
 .loading {
   display: flex;
   flex-direction: column;
@@ -259,21 +261,42 @@ const handleTouchEnd = (e) => {
   left: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.9) 30%,
-    rgba(0, 0, 0, 0.8) 60%,
-    rgba(0, 0, 0, 0) 100%
+    $dark-color 0%,
+    rgba($dark-color, 0.9) 30%,
+    rgba($dark-color, 0.6) 60%,
+    transparent 100%
   );
   width: 100%;
-  padding: 1rem;
   color: white;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 
   h2 {
+    margin: 0 1rem;
     color: white;
     font-family: 'Radley', serif;
     font-style: italic;
     font-size: 2rem;
-    margin-bottom: 10px;
+  }
+
+  span {
+    margin: 0 1rem;
+  }
+
+  .maker-location {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    background: white;
+    color: $dark-color;
+    display: inline-block;
+    border-radius: 100px;
+    padding: 0 5px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    font-weight: bold;
   }
 }
 
@@ -285,10 +308,10 @@ const handleTouchEnd = (e) => {
   width: 100%;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.9) 30%,
-    rgba(0, 0, 0, 0.8) 60%,
-    rgba(0, 0, 0, 0) 100%
+    rgba($dark-color, 1) 0%,
+    rgba($dark-color, 0.9) 30%,
+    rgba($dark-color, 0.8) 60%,
+    transparent 100%
   );
   padding: 1rem;
 
@@ -302,7 +325,7 @@ const handleTouchEnd = (e) => {
   font-family: 'Radley', serif;
   font-style: italic;
   font-size: 2rem;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .maker-image {
@@ -388,9 +411,6 @@ const handleTouchEnd = (e) => {
   left: 0;
   right: 0;
   display: flex;
-  background: #fff;
-  border-top: 1px solid #e0e0e0;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
   z-index: 1000;
   padding: 0.5rem 0;
   overflow-x: auto;
@@ -414,7 +434,7 @@ const handleTouchEnd = (e) => {
   min-width: 0;
   padding: 0.875rem 0.5rem;
   border: none;
-  background: transparent;
+  background: white;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -422,6 +442,9 @@ const handleTouchEnd = (e) => {
   white-space: nowrap;
   box-sizing: border-box;
   max-width: 100%;
+  margin: 0 12px;
+  border-radius: 100px;
+  outline: $dark-color 1px solid;
 
   @media (min-width: 768px) {
     padding: 1rem 1.5rem;
@@ -436,19 +459,20 @@ const handleTouchEnd = (e) => {
   }
 
   &.active {
-    color: #333;
-    font-weight: 600;
+    background: $primary-color;
+    color: white;
+    outline: none;
 
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: #333;
-      animation: slideIn 0.3s ease;
-    }
+    // &::after {
+    //   content: '';
+    //   position: absolute;
+    //   bottom: 0;
+    //   left: 0;
+    //   right: 0;
+    //   height: 3px;
+    //   background: #333;
+    //   animation: slideIn 0.3s ease;
+    // }
   }
 
   .tab-label {
